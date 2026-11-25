@@ -1,5 +1,8 @@
 # uds-package-metallb
 
+[![Official UDS release](https://img.shields.io/github/v/release/uds-packages/metallb)](https://github.com/uds-packages/metallb/releases/latest)
+[![Official UDS build](https://github.com/uds-packages/metallb/actions/workflows/release.yaml/badge.svg?branch=main)](https://github.com/uds-packages/metallb/actions/workflows/release.yaml?query=branch%3Amain)
+
 A Zarf Package containing a standalone version of [MetalLB](https://metallb.org/) to act as a standalone load-balancer or be a pre-req to UDS Core.
 
 ## Prerequisites
