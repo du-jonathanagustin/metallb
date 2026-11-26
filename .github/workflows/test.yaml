@@ -38,6 +38,7 @@ jobs:
         type: [install, upgrade]
         flavor: [upstream, unicorn, registry1]
     with:
+      udsCliVersion: "0.42.0"
       upgrade-flavors: ${{ needs.check-flavor.outputs.upgrade-flavors }}
       flavor: ${{ matrix.flavor }}
       type: ${{ matrix.type }}
