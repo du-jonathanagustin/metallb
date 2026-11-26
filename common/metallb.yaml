@@ -46,9 +46,9 @@ component:
           enableTemplating: true
           cmd: |
             {{- $pools := .Values.addresspools | default (dict) }}
-            {{- $pool := (index $pools "default" | default (dict)).ipAddressPoolCIDR }}
-            {{- $admin := (index $pools "adminIngress" | default (dict)).ipAddressPool }}
-            {{- $tenant := (index $pools "tenantIngress" | default (dict)).ipAddressPool }}
+            {{- $pool := index (index $pools "default" | default (dict)) "ipAddressPoolCIDR" }}
+            {{- $admin := index (index $pools "adminIngress" | default (dict)) "ipAddressPool" }}
+            {{- $tenant := index (index $pools "tenantIngress" | default (dict)) "ipAddressPool" }}
             {{- if or $pool (and $admin $tenant) }}
             :
             {{- else }}
