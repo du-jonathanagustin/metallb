@@ -16,6 +16,7 @@ permissions:
 
 jobs:
   publish:
+    if: github.repository == 'uds-packages/metallb'
     runs-on: ${{ matrix.architecture == 'arm64' && 'appstore-4-core-arm64' || 'appstore-4-core-amd64' }}
     timeout-minutes: 40
     permissions:
