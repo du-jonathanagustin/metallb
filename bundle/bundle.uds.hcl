@@ -8,7 +8,7 @@ uds {
 metadata {
   name        = "metallb-test"
   description = "A UDS Bundle for MetalLB"
-  version     = "dev"
+  version     = "0.16.2-uds.5"
 }
 
 package "init" {
@@ -35,7 +35,7 @@ package "core-crds" {
 }
 
 package "metallb" {
-  source       = "../zarf-package-metallb-${sys.arch}-dev.tar.zst"
+  source       = "../zarf-package-metallb-${sys.arch}-0.16.2-uds.5.tar.zst"
   depends_on   = [package.core-crds]
   values_files = ["values/metallb.yaml"]
 
