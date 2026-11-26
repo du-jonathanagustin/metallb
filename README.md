@@ -10,41 +10,22 @@ This package requires a Zarf-initialized kubernetes cluster to be installed.  Th
 
 ### Deploy
 
-Deploy this package by first determining what IP addresses you are able to use:
+Use a deploy-time values file to define the address range MetalLB may allocate, since that range must belong to the target network and be reserved for MetalLB.
 
-```shell
-$ ip addr
-1: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 12:34:56:78:90:ab brd ff:ff:ff:ff:ff:ff
-    inet 10.0.0.10/24 brd 10.0.0.255 scope global noprefixroute
-       valid_lft forever preferred_lft forever
-    inet6 1234::5678:90ab:cdef:1234/64 scope link noprefixroute 
-       valid_lft forever preferred_lft forever
+```yaml
+addresspools:
+  default:
+    ipAddressPoolCIDR: 192.0.2.32/27
+  interface: eth0
 ```
 
-Then deploy the package specifying the ingress IP addresses that you would like to use:
+The example uses a documentation-only network. For dedicated UDS Core gateways, set both `addresspools.adminIngress.ipAddressPool` and `addresspools.tenantIngress.ipAddressPool` to reserved addresses so each gateway has a matching pool. The passthrough gateway can use `addresspools.passthroughIngress.ipAddressPool` when enabled.
 
-```shell
-$ zarf package deploy oci://ghcr.io/defenseunicorns/packages/metallb:<version> \
-    --set IP_ADDRESS_POOL=10.0.0.32/27 \
-    --confirm
+```sh
+uds zarf package deploy "$VERIFIED_METALLB_ARCHIVE" --values ./metallb-values.yaml --confirm
 ```
 
-Or, in the case of using this package in concert with UDS Core:
-
-```shell
-$ zarf package deploy oci://ghcr.io/defenseunicorns/packages/metallb:<version> \
-    --set IP_ADDRESS_ADMIN_INGRESSGATEWAY=10.0.0.32 \
-    --set IP_ADDRESS_TENANT_INGRESSGATEWAY=10.0.0.33 \
-    --set IP_ADDRESS_PASSTHROUGH_INGRESSGATEWAY=10.0.0.34 \
-    --confirm
-```
-
-> [!NOTE]
->   - See [Test Bundle configuration](docs/configuration.md#test-bundle) for bundle deployment instructions.
->   - The IP addresses used here are placeholders. You can use whatever values you want that work for your environment.
->   - Package versions can be found [here](https://github.com/uds-packages/metallb/pkgs/container/packages%2Fmetallb)
->   - If you also want a 4th default IPAddressPool you can additionally set the `IP_ADDRESS_POOL` variable too. It should be an IP range, not a single address unlike the other variables which are single address. Ranges can be specified in either CIDR notation or "StartAddress-EndAddress" notation.
+The command takes the local archive of the release verified in the section below and the values file containing the deployment's addresses. See [Test bundle configuration](docs/configuration.md#test-bundle) for the bundled workflow.
 
 ## Releases
 

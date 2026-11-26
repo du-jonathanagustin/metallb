@@ -48,6 +48,20 @@ Set package values in [`metallb.yaml`](../bundle/values/metallb.yaml).
 Set network-specific IP addresses and options in
 [`bundle/config.uds.hcl`](../bundle/config.uds.hcl).
 
+## Migrate deployment values
+
+MetalLB's v1beta1 package reads structured values, so move deployment arguments from the legacy Zarf variable flags into a values file. The root Zarf schema validates those inputs before deployment.
+
+| Legacy variable | Values key |
+| --- | --- |
+| `IP_ADDRESS_POOL` | `addresspools.default.ipAddressPoolCIDR` |
+| `IP_ADDRESS_ADMIN_INGRESSGATEWAY` | `addresspools.adminIngress.ipAddressPool` |
+| `IP_ADDRESS_TENANT_INGRESSGATEWAY` | `addresspools.tenantIngress.ipAddressPool` |
+| `IP_ADDRESS_PASSTHROUGH_INGRESSGATEWAY` | `addresspools.passthroughIngress.ipAddressPool` |
+| `INTERFACE` | `addresspools.interface` |
+
+The test bundle's configuration variables supply values to the bundle's own YAML template.
+
 ## Gateway Pool Service Eligibility
 
 The `addresspools.adminIngress` and `addresspools.tenantIngress` IPAddressPools restrict allocation to their corresponding Istio gateway namespace and `app` label by default. Set `namespace` to `null` to allow Services in any namespace, or `matchLabels` to `null` to allow Services with any labels. You can remove either restriction independently or both together.
