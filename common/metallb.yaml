@@ -9,10 +9,8 @@ metadata:
 component:
   charts:
     - name: metallb
-      helmRepository:
-        url: https://metallb.github.io/metallb
-        version: 0.16.2
-        name: metallb
+      local:
+        path: ../charts/vendor/metallb-0.16.2.tgz
       namespace: metallb-system
       valuesFiles:
         - path: ../values/common-values.yaml
