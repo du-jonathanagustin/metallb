@@ -44,33 +44,9 @@ tasks:
   - name: test-metallb-lb
     description: Validate each MetalLB pool is allocating + L2-advertising
     actions:
-      - description: tenant pool — Keycloak public endpoint reachable via tenant gateway IP
-        cmd: |
-          TENANT_IP=$(kubectl get svc tenant-ingressgateway -n istio-tenant-gateway -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-
-          if docker run --network=k3d-uds --add-host "sso.uds.dev:${TENANT_IP}" curlimages/curl:latest curl -skL https://sso.uds.dev | grep -q "My Account"; then
-            echo "Successfully hit Keycloak through tenant gateway"
-          else
-            echo "Failed to hit Keycloak through tenant gateway"
-            exit 1
-          fi
-      - description: admin pool — Keycloak admin endpoint reachable via admin gateway IP
-        cmd: |
-          ADMIN_IP=$(kubectl get svc admin-ingressgateway -n istio-admin-gateway -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-
-          if docker run --network=k3d-uds --add-host "keycloak.admin.uds.dev:${ADMIN_IP}" curlimages/curl:latest curl -skL https://keycloak.admin.uds.dev | grep -q "Welcome to Keycloak"; then
-            echo "Successfully hit Keycloak through admin gateway"
-          else
-            echo "Failed to hit Keycloak through admin gateway"
-            exit 1
-          fi
-      - description: passthrough pool — nginx endpoint reachable via passthrough gateway IP
-        cmd: |
-          PASSTHROUGH_IP=$(kubectl get svc passthrough-ingressgateway -n istio-passthrough-gateway -o=jsonpath='{.status.loadBalancer.ingress[0].ip}')
-
-          if docker run --network=k3d-uds --add-host "passthrough.uds.dev:${PASSTHROUGH_IP}" curlimages/curl:latest curl -sk --max-time 10 https://passthrough.uds.dev/ | grep -q "passthrough ok"; then
-            echo "Successfully hit passthrough-test through passthrough gateway"
-          else
-            echo "Failed to hit passthrough-test through passthrough gateway"
-            exit 1
-          fi
+      - description: Verify the Keycloak public endpoint through the tenant gateway
+        cmd: bash tests/check-gateway.sh istio-tenant-gateway tenant-ingressgateway sso.uds.dev "My Account"
+      - description: Verify the Keycloak admin endpoint through the admin gateway
+        cmd: bash tests/check-gateway.sh istio-admin-gateway admin-ingressgateway keycloak.admin.uds.dev "Welcome to Keycloak"
+      - description: Verify the test endpoint through the passthrough gateway
+        cmd: bash tests/check-gateway.sh istio-passthrough-gateway passthrough-ingressgateway passthrough.uds.dev "passthrough ok"
